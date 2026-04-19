@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Meta Tags for Social Media Sharing -->
+    <meta property="og:title" content="cync48's RetroAchievements">
+    <meta property="og:description" content="My retro gaming achievements and progress">
+    <meta property="og:image" content="https://retroachievements.org/UserPic/cync48.png">
+    <meta property="og:url" content="https://[YOUR-USERNAME].github.io/retroachievements-share/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+
+    <title>cync48's RetroAchievements</title>
+
+    <!-- Retro Pixel Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+    <!-- html2canvas for Screenshot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            /* Light Mode - Soft & Easy on Eyes */
+            --bg-primary: #faf8f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d2d2d;
+            --text-secondary: #666666;
+            --accent-primary: #228b22;
+            --accent-secondary: #9370db;
+            --accent-tertiary: #4682b4;
+            --border-color: #d4d4d4;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #00ff41;
+            --text-secondary: #00cc33;
+            --accent-primary: #00ff41;
+            --accent-secondary: #ff00ff;
+            --accent-tertiary: #00d9ff;
+            --border-color: #00ff41;
+            --shadow-color: rgba(0, 255, 65, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* CRT Scanlines Effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 20px 30px 50px 30px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px var(--shadow-color);
+            position: relative;
+            min-height: 400px;
+        }
+
+        header h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            color: var(--accent-primary);
+            text-shadow: 2px 2px 0px var(--accent-secondary);
+            margin-bottom: 10px;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% {
+                transform: translate(0);
+            }
+            92% {
+                transform: translate(-2px, 1px);
+            }
+            94% {
+                transform: translate(2px, -1px);
+            }
+            96% {
+                transform: translate(-1px, 2px);
+            }
+            98% {
+                transform: translate(1px, -2px);
+            }
+        }
+
+        .user-info {
+            margin-top: 20px;
+        }
+
+        .user-avatar {
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--accent-primary);
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--accent-primary);
+            image-rendering: pixelated;
+        }
+
+        .user-stats {
+            text-align: left;
+        }
+
+        .stat-item {
+            font-size: 20px;
+            margin: 5px 0;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            color: var(--accent-secondary);
+            font-weight: bold;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: 2px solid var(--accent-primary);
+            color: var(--accent-primary);
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            box-shadow: 0 0 15px var(--accent-primary);
+        }
+
+        /* Header Share Buttons */
+        .header-share-buttons {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .share-icon-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-secondary);
+            background: transparent;
+            color: var(--accent-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .share-icon-button:hover {
+            background: var(--accent-secondary);
+            color: var(--bg-primary);
+            box-shadow: 0 0 15px var(--accent-secondary);
+            transform: scale(1.1);
+        }
+        .header-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        /* Share Button */
+        .share-button {
+            background: transparent;
+            border: 2px solid var(--accent-secondary);
+            color: var(--accent-secondary);
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .share-button:hover {
+            background: var(--accent-secondary);
+            color: var(--bg-primary);
+            box-shadow: 0 0 15px var(--accent-secondary);
+        }
+
+        /* Achievements Section */
+        .achievements-section {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px var(--shadow-color);
+        }
+
+        .section-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            color: var(--accent-tertiary);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px var(--accent-primary);
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: var(--bg-secondary);
+            transition: all 0.3s;
+        }
+
+        .achievement-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px var(--accent-secondary);
+            border-color: var(--accent-secondary);
+        }
+
+        .achievement-badge {
+            width: 64px;
+            height: 64px;
+            border: 2px solid var(--accent-primary);
+            border-radius: 4px;
+            image-rendering: pixelated;
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-title {
+            font-size: 18px;
+            color: var(--accent-secondary);
+            margin-bottom: 5px;
+        }
+
+        .achievement-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .achievement-meta {
+            font-size: 14px;
+            color: var(--accent-tertiary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 30px;
+            position: relative;
+        }
+
+        footer .theme-toggle {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-shadow: 0 0 10px var(--accent-primary);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: var(--accent-secondary);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Error State */
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: var(--accent-secondary);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 16px;
+            }
+
+            .user-info {
+                flex-direction: column;
+            }
+
+            .header-buttons {
+                position: static;
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+
+            .share-button {
+                font-size: 8px;
+                padding: 6px 12px;
+            }
+
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .achievement-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border-color: var(--accent-secondary);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value-large {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 18px;
+            color: var(--accent-primary);
+            text-shadow: 2px 2px 0px var(--accent-secondary);
+        }
+
+        /* Activity Content */
+        .activity-content {
+            font-size: 18px;
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .activity-section {
+            margin-bottom: 15px;
+        }
+
+        /* Total Points Display */
+        .total-points {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 32px;
+            color: var(--accent-primary);
+            text-shadow: 0 0 10px var(--accent-primary);
+            margin: 20px 0;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px var(--accent-primary);
+            }
+            to {
+                text-shadow: 0 0 20px var(--accent-primary), 0 0 30px var(--accent-secondary);
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <header>
+            <div class="header-share-buttons">
+                <button class="share-icon-button" onclick="shareToInstagram()" title="Share to Instagram">📸</button>
+                <button class="share-icon-button" onclick="shareToX()" title="Share to X">𝕏</button>
+            </div>
+            <h1>RETRO ACHIEVEMENTS</h1>
+            <div class="user-info">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <img class="user-avatar" id="userAvatar" src="" alt="User Avatar">
+                        <div style="flex: 1;">
+                            <div class="stat-item" style="text-align: left;">Player: <span class="stat-value" id="username">Loading...</span></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <img id="gameIconHeader" src="" alt="Game Icon" style="width: 64px; height: 64px; border: 2px solid var(--accent-tertiary); border-radius: 8px; image-rendering: pixelated; background: var(--bg-secondary);">
+                        <div style="flex: 1;">
+                            <div class="stat-item" style="text-align: left;">Now Playing <span class="stat-value" id="currentGameHeader">Loading...</span></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 15px; align-items: center; width: 100%;">
+                        <div style="width: 64px; text-align: center; font-size: 24px;">🏆</div>
+                        <div style="flex: 1; text-align: left;">
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;">Recent Unlocks (12h)</div>
+                            <div id="recentUnlocksHeader" style="font-size: 16px; color: var(--accent-secondary);">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="total-points" id="totalPoints">0 PTS</div>
+            <div style="font-size: 16px; color: var(--text-secondary); margin-top: 10px;">
+                Rank: <span id="globalRank" style="color: var(--accent-secondary);">#-</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="achievements-section">
+                <h2 class="section-title">⮝ CURRENT GAME ACTIVITY ⮟</h2>
+                <div id="gameActivity">
+                    <div class="loading">Loading game activity...</div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <button class="theme-toggle" onclick="toggleTheme()">◐ LIGHT</button>
+            <p>Powered by <a href="https://retroachievements.org/" target="_blank">RetroAchievements</a></p>
+            <p style="margin-top: 10px; font-size: 12px;">© 2026 cync48's Retro Gaming Journey</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            username: 'cync48',
+            apiKey: 'foW7mgJ4OK9DDFpmknGdkIcShzv6NFLr',
+            apiBaseUrl: 'https://retroachievements.org',
+            recentAchievementsCount: 10,
+            // Pre-loaded base64 avatar (to avoid CORS issues)
+            defaultAvatarBase64: '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'
+        };
+
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+
+            const button = document.querySelector('.theme-toggle');
+            button.textContent = newTheme === 'dark' ? '◐ LIGHT' : '◐ DARK';
+
+            // Save to localStorage
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.body.setAttribute('data-theme', savedTheme);
+            const button = document.querySelector('.theme-toggle');
+            button.textContent = savedTheme === 'dark' ? '◐ LIGHT' : '◐ DARK';
+        }
+
+        // Fetch User Summary
+        async function fetchUserSummary() {
+            try {
+                const url = `${CONFIG.apiBaseUrl}/API/API_GetUserSummary.php?u=${CONFIG.username}&z=${CONFIG.username}&y=${CONFIG.apiKey}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                document.getElementById('username').textContent = data.User;
+                document.getElementById('totalPoints').textContent = `${data.TotalPoints + data.TotalSoftcorePoints} PTS`;
+                document.getElementById('globalRank').textContent = `#${data.TotalRanked || '?'}`;
+
+                // Use local avatar.png file (must be in same directory)
+                document.getElementById('userAvatar').src = 'avatar.png';
+
+                // Fetch game info for header
+                let currentGameText = 'Not playing';
+                if (data.LastGameID) {
+                    try {
+                        const gameInfo = await fetchGameInfo(data.LastGameID);
+                        if (gameInfo) {
+                            if (gameInfo.Title) {
+                                currentGameText = `${gameInfo.Title} (${gameInfo.ConsoleName || 'Unknown'})`;
+                            }
+                            // Set game icon in header - direct API URL first
+                            if (gameInfo.ImageIcon) {
+                                const iconUrl = `${CONFIG.apiBaseUrl}${gameInfo.ImageIcon}`;
+                                const gameIconEl = document.getElementById('gameIconHeader');
+                                if (gameIconEl) {
+                                    gameIconEl.src = iconUrl;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Error fetching game info:', e);
+                    }
+                }
+                document.getElementById('currentGameHeader').textContent = currentGameText;
+
+                // Fetch recent unlocks for header
+                try {
+                    const recentAchievements = await fetchRecentAchievements();
+                    const recentUnlocksContainer = document.getElementById('recentUnlocksHeader');
+
+                    if (recentAchievements && recentAchievements.length > 0) {
+                        // Tampilkan 2 achievement terakhir dari 12 jam
+                        const displayAchievements = recentAchievements.slice(0, 2);
+                        recentUnlocksContainer.innerHTML = displayAchievements.map(ach => `
+                            <div style="padding: 4px 0;">• ${ach.Title} (${ach.Points} pts)</div>
+                        `).join('');
+                    } else {
+                        recentUnlocksContainer.innerHTML = '<span style="color: var(--text-secondary);">No recent unlocks</span>';
+                    }
+                } catch (e) {
+                    console.error('Error fetching recent unlocks:', e);
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Error fetching user summary:', error);
+                document.getElementById('latestAchievement').textContent = '❌ Error';
+                return null;
+            }
+        }
+
+        // Convert image URL to base64 (cached in localStorage)
+        async function getBase64Image(url) {
+            // Check cache first
+            const cacheKey = `badge_${btoa(url)}`;
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) {
+                return cached;
+            }
+
+            // Fetch and convert
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const base64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+
+            // Cache for 24 hours
+            localStorage.setItem(cacheKey, base64);
+            return base64;
+        }
+
+        // Convert image URL to base64 (cached in localStorage)
+        async function getBase64Image(url) {
+            const cacheKey = `img_${btoa(url)}`;
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) {
+                return cached;
+            }
+
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const base64 = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+
+            localStorage.setItem(cacheKey, base64);
+            return base64;
+        }
+
+        // Fetch Latest Achievement
+        async function fetchLatestAchievement() {
+            try {
+                const url = `${CONFIG.apiBaseUrl}/API/API_GetUserRecentAchievements.php?u=${CONFIG.username}&z=${CONFIG.username}&y=${CONFIG.apiKey}&c=1`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    return data[0];
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching latest achievement:', error);
+                return null;
+            }
+        }
+
+        // Fetch Recent Achievements (multiple)
+        async function fetchRecentAchievements(count = 10) {
+            try {
+                // m=720 = 12 jam terakhir (720 menit)
+                const url = `${CONFIG.apiBaseUrl}/API/API_GetUserRecentAchievements.php?u=${CONFIG.username}&z=${CONFIG.username}&y=${CONFIG.apiKey}&c=${count}&m=720`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    return data;
+                }
+                return [];
+            } catch (error) {
+                console.error('Error fetching recent achievements:', error);
+                return [];
+            }
+        }
+
+        // Fetch Game Info
+        async function fetchGameInfo(gameId) {
+            try {
+                const url = `${CONFIG.apiBaseUrl}/API/API_GetGame.php?i=${gameId}&y=${CONFIG.apiKey}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching game info:', error);
+                return null;
+            }
+        }
+
+        // Render Game Activity
+        async function renderGameActivity(summaryData) {
+            const container = document.getElementById('gameActivity');
+
+            if (!summaryData) {
+                container.innerHTML = '<div class="error">Failed to load game activity</div>';
+                return;
+            }
+
+            const richPresence = summaryData.RichPresenceMsg || 'Not playing';
+            const lastActive = summaryData.LastActivity?.timestamp || 'Unknown';
+            const lastGameId = summaryData.LastGameID || null;
+            const totalPoints = summaryData.TotalPoints || 0;
+            const softcorePoints = summaryData.TotalSoftcorePoints || 0;
+            const truePoints = summaryData.TotalTruePoints || 0;
+            const memberSince = summaryData.MemberSince || 'Unknown';
+            const rank = summaryData.TotalRanked || 'N/A';
+
+            // Fetch game info to get proper title
+            let gameTitle = 'Unknown Game';
+            let gameIcon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect fill="%23333" width="64" height="64"/><text x="32" y="32" text-anchor="middle" fill="%23fff" dy=".3em" font-size="24">🎮</text></svg>';
+            let consoleName = 'Unknown Console';
+
+            if (lastGameId) {
+                const gameInfo = await fetchGameInfo(lastGameId);
+                if (gameInfo) {
+                    gameTitle = gameInfo.Title || 'Unknown Game';
+                    consoleName = gameInfo.ConsoleName || 'Unknown Console';
+                    if (gameInfo.ImageIcon) {
+                        // Convert to base64 for screenshot compatibility
+                        const iconUrl = `${CONFIG.apiBaseUrl}${gameInfo.ImageIcon}`;
+                        try {
+                            gameIcon = await getBase64Image(iconUrl);
+                        } catch (e) {
+                            console.error('Failed to load game icon:', e);
+                        }
+                    }
+                }
+            }
+
+            container.innerHTML = `
+                <div class="game-activity-item">
+                    <div class="activity-section">
+                        <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px;">
+                            <img id="gameIcon" src="${gameIcon}" alt="Game Icon" style="width: 64px; height: 64px; border: 2px solid var(--accent-primary); border-radius: 8px; image-rendering: pixelated; background: var(--bg-secondary);">
+                            <div style="flex: 1;">
+                                <h3 style="color: var(--accent-secondary); margin: 0 0 5px 0; font-family: 'Press Start 2P', cursive; font-size: 14px; line-height: 1.4;">🎮 ${gameTitle}</h3>
+                                <div style="color: var(--accent-tertiary); font-size: 14px; margin-bottom: 10px;">${consoleName}</div>
+                            </div>
+                        </div>
+                        <div class="activity-content">${richPresence}</div>
+                        <div class="activity-meta" style="margin-top: 10px; color: var(--text-secondary);">
+                            Last Active: ${lastActive ? new Date(lastActive).toLocaleString() : 'Unknown'}
+                        </div>
+                    </div>
+
+                    <div class="activity-section" style="margin-top: 20px;">
+                        <h3 style="color: var(--accent-tertiary); margin-bottom: 10px;">📊 Player Stats</h3>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-label">Hardcore Points</div>
+                                <div class="stat-value-large">${totalPoints}</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Softcore Points</div>
+                                <div class="stat-value-large">${softcorePoints}</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">True Points</div>
+                                <div class="stat-value-large">${truePoints}</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">Global Rank</div>
+                                <div class="stat-value-large">#${rank}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; border: 1px solid var(--border-color);">
+                            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;">Latest Achievement</div>
+                            <div id="latestAchievementDetail" style="font-size: 16px; color: var(--accent-secondary);">Loading...</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-section" style="margin-top: 20px;">
+                        <div class="activity-meta" style="font-size: 14px; color: var(--text-secondary);">
+                            Member Since: ${new Date(memberSince).toLocaleDateString()}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Fetch and render latest achievement
+            const latestAchievement = await fetchLatestAchievement();
+            const detailContainer = document.getElementById('latestAchievementDetail');
+
+            if (latestAchievement) {
+                detailContainer.innerHTML = `
+                    <strong>${latestAchievement.Title}</strong> (${latestAchievement.Points} pts)<br>
+                    <span style="font-size: 14px; color: var(--text-secondary);">${latestAchievement.GameTitle} - ${new Date(latestAchievement.Date).toLocaleDateString()}</span>
+                `;
+            } else {
+                detailContainer.innerHTML = '<span style="color: var(--text-secondary);">No recent achievements</span>';
+            }
+        }
+        async function renderAchievements(achievements) {
+            const container = document.getElementById('achievementsList');
+
+            if (!achievements || achievements.length === 0) {
+                container.innerHTML = '<div class="error">No recent achievements found</div>';
+                return;
+            }
+
+            // Convert badges to base64 and render
+            container.innerHTML = achievements.map(achievement => {
+                const badgeUrl = `${CONFIG.apiBaseUrl}${achievement.BadgeURL}`;
+                return `
+                <div class="achievement-item">
+                    <img class="achievement-badge"
+                         src="${badgeUrl}"
+                         data-url="${badgeUrl}"
+                         alt="${achievement.Title}"
+                         loading="lazy">
+                    <div class="achievement-info">
+                        <div class="achievement-title">${achievement.Title}</div>
+                        <div class="achievement-desc">${achievement.Description}</div>
+                        <div class="achievement-meta">
+                            ${achievement.GameTitle} (${achievement.ConsoleName}) • ${achievement.Points} pts • ${new Date(achievement.Date).toLocaleDateString()}
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+
+            // Convert all badge images to base64
+            const badgeImages = container.querySelectorAll('.achievement-badge');
+            for (const img of badgeImages) {
+                const url = img.getAttribute('data-url');
+                try {
+                    img.src = await getBase64Image(url);
+                } catch (e) {
+                    console.error('Failed to load badge:', url);
+                }
+            }
+        }
+
+        // Share Functions
+        async function preloadImages() {
+            const images = document.querySelectorAll('img');
+            const promises = Array.from(images).map(img => {
+                return new Promise(resolve => {
+                    if (img.complete) {
+                        resolve();
+                        return;
+                    }
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                    setTimeout(resolve, 8000);
+                });
+            });
+            await Promise.all(promises);
+        }
+
+        async function captureHeader(platform) {
+            try {
+                console.log(`Starting capture for ${platform}...`);
+
+                // Preload all images first
+                await preloadImages();
+
+                // Wait a bit more to ensure rendering is complete
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                const header = document.querySelector('header');
+                const shareButtons = document.querySelector('.header-share-buttons');
+                const themeToggle = document.querySelector('.theme-toggle');
+
+                // Hide all buttons during capture
+                if (shareButtons) shareButtons.style.display = 'none';
+                if (themeToggle) themeToggle.style.display = 'none';
+
+                // Set canvas dimensions based on platform
+                let width, height, scale;
+                if (platform === 'instagram') {
+                    width = 1080;  // IG Story standard width
+                    height = 1920; // IG Story standard height (9:16 ratio)
+                    scale = 1.5; // Balanced quality
+                } else {
+                    width = 1200;  // X optimal width
+                    height = 675;  // 16:9 ratio
+                    scale = 1; // Standard quality
+                }
+
+                // Get current theme background color
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                const bgColor = isDark ? '#0a0a0a' : '#faf8f5';
+
+                console.log(`Capturing with dimensions: ${width}x${height}, scale: ${scale}`);
+
+                // Create canvas with proxy-friendly options
+                const canvas = await html2canvas(header, {
+                    width: width,
+                    height: height,
+                    scale: scale,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: bgColor,
+                    logging: false,
+                    imageTimeout: 10000,
+                    foreignObjectRendering: false,
+                    onclone: (clonedDoc) => {
+                        const clonedHeader = clonedDoc.querySelector('header');
+                        if (clonedHeader) {
+                            clonedHeader.style.padding = '50px 30px';
+                            clonedHeader.style.minHeight = '400px';
+                        }
+                    }
+                });
+
+                console.log(`Canvas created: ${canvas.width}x${canvas.height}`);
+
+                // Show all buttons again
+                if (shareButtons) shareButtons.style.display = 'flex';
+                if (themeToggle) themeToggle.style.display = 'block';
+
+                return canvas;
+            } catch (error) {
+                console.error('Error capturing header:', error);
+                console.error('Error stack:', error.stack);
+                // Show buttons again even if error
+                const shareButtons = document.querySelector('.header-share-buttons');
+                const themeToggle = document.querySelector('.theme-toggle');
+                if (shareButtons) shareButtons.style.display = 'flex';
+                if (themeToggle) themeToggle.style.display = 'block';
+
+                alert('Gagal screenshot. Coba lagi atau pastikan semua gambar sudah loading.');
+                return null;
+            }
+        }
+
+        async function shareToInstagram() {
+            const shareButton = document.querySelector('.share-icon-button[onclick="shareToInstagram()"]');
+            const originalContent = shareButton.innerHTML;
+            shareButton.disabled = true;
+
+            try {
+                const canvas = await captureHeader('instagram');
+                if (!canvas) {
+                    alert('Failed to capture screenshot. Please try again.');
+                    return;
+                }
+
+                // Convert canvas to blob
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'retroachievements-story.png', { type: 'image/png' });
+
+                    if (navigator.share && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'My RetroAchievements',
+                                text: 'Check out my retro gaming progress! 🎮'
+                            });
+                        } catch (err) {
+                            console.log('Share canceled or failed:', err);
+                            downloadFallback(canvas, 'instagram-story.png');
+                        }
+                    } else {
+                        // Fallback: download the image
+                        downloadFallback(canvas, 'instagram-story.png');
+                    }
+
+                    // Reset button
+                    shareButton.innerHTML = originalContent;
+                    shareButton.disabled = false;
+                });
+            } catch (error) {
+                console.error('Error sharing to Instagram:', error);
+                alert('Failed to create screenshot. Please try again.');
+                shareButton.innerHTML = originalContent;
+                shareButton.disabled = false;
+            }
+        }
+
+        async function shareToX() {
+            const shareButton = document.querySelector('.share-icon-button[onclick="shareToX()"]');
+            const originalContent = shareButton.innerHTML;
+            shareButton.disabled = true;
+
+            try {
+                const canvas = await captureHeader('twitter');
+                if (!canvas) {
+                    alert('Failed to capture screenshot. Please try again.');
+                    return;
+                }
+
+                // Convert canvas to blob
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'retroachievements-x.png', { type: 'image/png' });
+
+                    if (navigator.share && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'My RetroAchievements',
+                                text: 'Check out my retro gaming progress! 🎮✨ #RetroAchievements #RetroGaming'
+                            });
+                        } catch (err) {
+                            console.log('Share canceled or failed:', err);
+                            downloadFallback(canvas, 'twitter-post.png');
+                        }
+                    } else {
+                        // Fallback: download the image
+                        downloadFallback(canvas, 'twitter-post.png');
+                    }
+
+                    // Reset button
+                    shareButton.innerHTML = originalContent;
+                    shareButton.disabled = false;
+                });
+            } catch (error) {
+                console.error('Error sharing to X:', error);
+                alert('Failed to create screenshot. Please try again.');
+                shareButton.innerHTML = originalContent;
+                shareButton.disabled = false;
+            }
+        }
+
+        function downloadFallback(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Initialize
+        async function init() {
+            loadTheme();
+
+            // Fetch user data
+            const summaryData = await fetchUserSummary();
+
+            // Render game activity
+            renderGameActivity(summaryData);
+
+            // Wait for all images to load
+            await preloadImages();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
