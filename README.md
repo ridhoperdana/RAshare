@@ -20,45 +20,32 @@ git clone https://github.com/[YOUR-USERNAME]/retroachievements-share.git
 cd retroachievements-share
 ```
 
-### 2. Buat Config File
+### 2. Buka di Browser
 
-Copy template dan isi dengan API key kamu:
+Cukup buka `index.html` di browser kamu, atau deploy ke GitHub Pages/Vercel/Netlify.
 
-```bash
-cp config.json.example config.json
-```
+### 3. Masukkan Credentials
 
-Lalu edit `config.json`:
-
-```json
-{
-  "username": "YOUR_RETROACHIEVEMENTS_USERNAME",
-  "apiKey": "YOUR_API_KEY",
-  "apiBaseUrl": "https://retroachievements.org"
-}
-```
+1. Klik tombol **"⚙ CONFIG"** di pojok kanan bawah
+2. Masukkan **Username** RetroAchievements kamu
+3. Masukkan **API Key** dari RetroAchievements
+4. Klik **"SAVE & LOAD"**
 
 **Cara dapat API Key:**
 1. Login ke https://retroachievements.org/
 2. Pergi ke: https://retroachievements.org/controlpanel.php
 3. Cari "API Key" di bagian bawah
 
-⚠️ **IMPORTANT:** `config.json` sudah di `.gitignore` dan **TIDAK AKAN** di-commit ke repository. Ini untuk melindungi API key kamu.
+### 4. Selesai!
 
-### 3. Update index.html
+Data akan otomatis tersimpan di browser (localStorage). Kamu tidak perlu memasukkan credentials lagi kecuali:
+- Clear browser data/cache
+- Ganti browser
+- Ganti device
 
-Edit bagian ini di `index.html` (sekitar line 260):
+✅ **SECURITY:** Credentials disimpan di localStorage browser kamu dan **TIDAK PERNAH** dikirim ke server manapun (kecuali RetroAchievements API saat fetch data).
 
-```javascript
-const CONFIG = {
-    username: 'YOUR_USERNAME',
-    apiKey: 'YOUR_API_KEY',
-    apiBaseUrl: 'https://retroachievements.org',
-    recentAchievementsCount: 10
-};
-```
-
-### 4. Deploy ke GitHub Pages
+### 4. Deploy ke GitHub Pages (Opsional)
 
 #### Cara 1: Manual via GitHub Web UI
 
@@ -135,11 +122,14 @@ recentAchievementsCount: 10  // Ganti angkanya
 
 ## 🔒 Security Notes
 
-- ✅ `config.json` sudah ada di `.gitignore` - **AMAN** dari commit
-- ✅ API key kamu **TIDAK AKAN** pernah masuk ke repository
-- ✅ Template tersedia di `config.json.example` untuk referensi
+- ✅ **NO HARDCODED CREDENTIALS** - Semua credentials disimpan di localStorage browser
+- ✅ **NO SERVER SIDE** - Aplikasi ini 100% client-side, tidak ada backend
+- ✅ **PRIVACY** - Credentials tidak pernah dikirim ke server manapun kecuali RetroAchievements API
+- ✅ **OPEN SOURCE** - Code sepenuhnya transparan, bisa di-audit siapa saja
 - ⚠️ **JANGAN pernah** men-share API key kamu secara publik
 - ⚠️ Jika API key bocor, segera revoke di: https://retroachievements.org/controlpanel.php
+
+**Catatan:** Karena ini aplikasi client-side, credentials disimpan di browser. Pastikan browser kamu aman dan jangan gunakan di komputer publik/shared.
 
 ## 🐛 Troubleshooting
 
