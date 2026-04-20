@@ -933,13 +933,8 @@
                     gameTitle = gameInfo.Title || 'Unknown Game';
                     consoleName = gameInfo.ConsoleName || 'Unknown Console';
                     if (gameInfo.ImageIcon) {
-                        // Convert to base64 for screenshot compatibility
-                        const iconUrl = `${CONFIG.apiBaseUrl}${gameInfo.ImageIcon}`;
-                        try {
-                            gameIcon = await getBase64Image(iconUrl);
-                        } catch (e) {
-                            console.error('Failed to load game icon:', e);
-                        }
+                        // Use direct URL (no base64 conversion needed)
+                        gameIcon = `${CONFIG.apiBaseUrl}${gameInfo.ImageIcon}`;
                     }
                 }
             }
@@ -1035,15 +1030,11 @@
                 </div>
             `}).join('');
 
-            // Convert all badge images to base64
+            // Set all badge images to direct URL
             const badgeImages = container.querySelectorAll('.achievement-badge');
             for (const img of badgeImages) {
                 const url = img.getAttribute('data-url');
-                try {
-                    img.src = await getBase64Image(url);
-                } catch (e) {
-                    console.error('Failed to load badge:', url);
-                }
+                img.src = url;
             }
         }
 
