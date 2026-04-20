@@ -772,11 +772,12 @@
                             if (gameInfo.Title) {
                                 currentGameText = `${gameInfo.Title} (${gameInfo.ConsoleName || 'Unknown'})`;
                             }
-                            // Set game icon in header - direct API URL first
+                            // Set game icon in header
                             if (gameInfo.ImageIcon) {
                                 const iconUrl = `${CONFIG.apiBaseUrl}${gameInfo.ImageIcon}`;
                                 const gameIconEl = document.getElementById('gameIconHeader');
                                 if (gameIconEl) {
+                                    gameIconEl.crossOrigin = 'anonymous';
                                     gameIconEl.src = iconUrl;
                                 }
                             }
@@ -811,6 +812,39 @@
                 document.getElementById('latestAchievement').textContent = '❌ Error';
                 return null;
             }
+        }
+
+        // Preload all images and convert to base64 for screenshot compatibility
+        async function preloadImagesForScreenshot() {
+            const images = document.querySelectorAll('img[crossorigin]');
+            const promises = [];
+
+            images.forEach(img => {
+                if (img.src && img.src.startsWith('http')) {
+                    promises.push(
+                        fetch(img.src, { mode: 'cors' })
+                            .then(response => {
+                                if (!response.ok) throw new Error('Network error');
+                                return response.blob();
+                            })
+                            .then(blob => {
+                                return new Promise((resolve) => {
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                        img.src = reader.result;
+                                        resolve();
+                                    };
+                                    reader.readAsDataURL(blob);
+                                });
+                            })
+                            .catch(err => {
+                                console.warn('Failed to preload image:', img.src, err);
+                            })
+                    );
+                }
+            });
+
+            await Promise.all(promises);
         }
 
         // Convert image URL to base64 (cached in localStorage)
@@ -920,7 +954,7 @@
                 <div class="game-activity-item">
                     <div class="activity-section">
                         <div style="display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px;">
-                            <img id="gameIcon" src="${gameIcon}" alt="Game Icon" style="width: 64px; height: 64px; border: 2px solid var(--accent-primary); border-radius: 8px; image-rendering: pixelated; background: var(--bg-secondary);">
+                            <img id="gameIcon" src="${gameIcon}" alt="Game Icon" crossOrigin="anonymous" style="width: 64px; height: 64px; border: 2px solid var(--accent-primary); border-radius: 8px; image-rendering: pixelated; background: var(--bg-secondary);">
                             <div style="flex: 1;">
                                 <h3 style="color: var(--accent-secondary); margin: 0 0 5px 0; font-family: 'Press Start 2P', cursive; font-size: 14px; line-height: 1.4;">🎮 ${gameTitle}</h3>
                                 <div style="color: var(--accent-tertiary); font-size: 14px; margin-bottom: 10px;">${consoleName}</div>
@@ -1038,6 +1072,9 @@
 
                 // Preload all images first
                 await preloadImages();
+
+                // Convert crossorigin images to base64 for screenshot compatibility
+                await preloadImagesForScreenshot();
 
                 // Wait a bit more to ensure rendering is complete
                 await new Promise(resolve => setTimeout(resolve, 500));
