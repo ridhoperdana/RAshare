@@ -1089,26 +1089,24 @@
                 const isDark = document.body.getAttribute('data-theme') === 'dark';
                 const bgColor = isDark ? '#0a0a0a' : '#faf8f5';
 
-                console.log(`Capturing with dimensions: ${width}x${height}, scale: ${scale}`);
+                // Get actual header dimensions
+                const headerRect = header.getBoundingClientRect();
+                const actualWidth = Math.ceil(headerRect.width);
+                const actualHeight = Math.ceil(headerRect.height);
 
-                // Create canvas with proxy-friendly options
+                console.log(`Header actual size: ${actualWidth}x${actualHeight}`);
+
+                // Create canvas with actual header dimensions
                 const canvas = await html2canvas(header, {
-                    width: width,
-                    height: height,
+                    width: actualWidth,
+                    height: actualHeight,
                     scale: scale,
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: bgColor,
                     logging: false,
                     imageTimeout: 10000,
-                    foreignObjectRendering: false,
-                    onclone: (clonedDoc) => {
-                        const clonedHeader = clonedDoc.querySelector('header');
-                        if (clonedHeader) {
-                            clonedHeader.style.padding = '50px 30px';
-                            clonedHeader.style.minHeight = '400px';
-                        }
-                    }
+                    foreignObjectRendering: false
                 });
 
                 console.log(`Canvas created: ${canvas.width}x${canvas.height}`);
