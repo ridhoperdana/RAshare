@@ -1,0 +1,5 @@
+{
+  "username": "YOUR_RETROACHIEVEMENTS_USERNAME",
+  "apiKey": "YOUR_RETROACHIEVEMENTS_API_KEY",
+  "apiBaseUrl": "https://retroachievements.org"
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Avatar Test</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #00ff41;
+            padding: 20px;
+            font-family: monospace;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border: 3px solid #00ff41;
+            border-radius: 8px;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Avatar Test</h1>
+    <div>
+        <p>Testing avatar.png from same directory:</p>
+        <img src="avatar.png" class="avatar" alt="Avatar" id="avatar1">
+    </div>
+    <div class="test-result">
+        <h3>Test Results:</h3>
+        <p id="loadStatus">Loading...</p>
+        <p id="imageInfo"></p>
+    </div>
+    <script>
+        const img = document.getElementById('avatar1');
+        
+        img.onload = function() {
+            document.getElementById('loadStatus').textContent = '✅ Avatar loaded successfully!';
+            document.getElementById('imageInfo').textContent = 
+                'Natural size: ' + this.naturalWidth + 'x' + this.naturalHeight;
+            document.getElementById('loadStatus').style.color = '#00ff41';
+        };
+        
+        img.onerror = function() {
+            document.getElementById('loadStatus').textContent = '❌ Failed to load avatar';
+            document.getElementById('imageInfo').textContent = 'src: ' + this.src;
+            document.getElementById('loadStatus').style.color = '#ff4444';
+        };
+
+        // Check if loaded already
+        if (img.complete) {
+            if (img.naturalWidth > 0) {
+                document.getElementById('loadStatus').textContent = '✅ Avatar already loaded!';
+                document.getElementById('imageInfo').textContent = 
+                    'Natural size: ' + img.naturalWidth + 'x' + img.naturalHeight;
+                document.getElementById('loadStatus').style.color = '#00ff41';
+            } else {
+                document.getElementById('loadStatus').textContent = '⚠️ Image element is complete but has no natural size';
+                document.getElementById('loadStatus').style.color = '#ffaa00';
+            }
+        }
+
+        // Log for debugging
+        console.log('Test page loaded');
+        console.log('Avatar src:', img.src);
+    </script>
+</body>
+</html>
