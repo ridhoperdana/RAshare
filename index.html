@@ -816,35 +816,40 @@
 
         // Preload all images and convert to base64 for screenshot compatibility
         async function preloadImagesForScreenshot() {
-            const images = document.querySelectorAll('img[crossorigin]');
-            const promises = [];
+            const images = Array.from(document.querySelectorAll('img[crossorigin]'));
+            console.log(`Converting ${images.length} images to base64 for screenshot...`);
 
-            images.forEach(img => {
+            for (const img of images) {
                 if (img.src && img.src.startsWith('http')) {
-                    promises.push(
-                        fetch(img.src, { mode: 'cors' })
-                            .then(response => {
-                                if (!response.ok) throw new Error('Network error');
-                                return response.blob();
-                            })
-                            .then(blob => {
-                                return new Promise((resolve) => {
-                                    const reader = new FileReader();
-                                    reader.onloadend = () => {
-                                        img.src = reader.result;
-                                        resolve();
-                                    };
-                                    reader.readAsDataURL(blob);
-                                });
-                            })
-                            .catch(err => {
-                                console.warn('Failed to preload image:', img.src, err);
-                            })
-                    );
+                    try {
+                        console.log('Converting:', img.src);
+                        const response = await fetch(img.src, { 
+                            mode: 'cors',
+                            credentials: 'omit'
+                        });
+                        
+                        if (!response.ok) {
+                            console.warn('Failed to fetch:', img.src, response.status);
+                            continue;
+                        }
+                        
+                        const blob = await response.blob();
+                        const base64 = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        });
+                        
+                        img.src = base64;
+                        console.log('✓ Converted:', img.src.substring(0, 50) + '...');
+                    } catch (err) {
+                        console.error('✗ Failed to convert image:', img.src, err);
+                    }
                 }
-            });
-
-            await Promise.all(promises);
+            }
+            
+            console.log('Image conversion complete');
         }
 
         // Convert image URL to base64 (cached in localStorage)
