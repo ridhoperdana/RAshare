@@ -772,12 +772,18 @@
                             if (gameInfo.Title) {
                                 currentGameText = `${gameInfo.Title} (${gameInfo.ConsoleName || 'Unknown'})`;
                             }
-                            // Set game icon in header
+                            // Set game icon in header (convert to base64 to avoid CORS)
                             if (gameInfo.ImageIcon) {
                                 const iconUrl = `${CONFIG.apiBaseUrl}${gameInfo.ImageIcon}`;
                                 const gameIconEl = document.getElementById('gameIconHeader');
                                 if (gameIconEl) {
-                                    gameIconEl.src = iconUrl;
+                                    try {
+                                        const base64Icon = await getBase64Image(iconUrl);
+                                        gameIconEl.src = base64Icon;
+                                    } catch (err) {
+                                        console.error('Failed to convert game icon to base64:', err);
+                                        gameIconEl.src = iconUrl;
+                                    }
                                 }
                             }
                         }
@@ -815,20 +821,54 @@
 
         // Preload all images and convert to base64 for screenshot compatibility
         async function preloadImagesForScreenshot() {
-            const images = Array.from(document.querySelectorAll('img[crossorigin]'));
+            // Select all images in header
+            const images = Array.from(document.querySelectorAll('header img'));
             console.log(`Converting ${images.length} images to base64 for screenshot...`);
 
             for (const img of images) {
                 if (img.src && img.src.startsWith('http')) {
                     try {
                         console.log('Converting:', img.src);
-                        const response = await fetch(img.src, { 
-                            mode: 'cors',
-                            credentials: 'omit'
-                        });
                         
-                        if (!response.ok) {
-                            console.warn('Failed to fetch:', img.src, response.status);
+                        // Add crossorigin for the fetch
+                        const originalSrc = img.src;
+                        
+                        // Try multiple proxy options
+                        let response;
+                        let proxyUrls = [
+                            `https://api.allorigins.win/raw?url=${encodeURIComponent(originalSrc)}`,
+                            `https://corsproxy.io/?${encodeURIComponent(originalSrc)}`
+                        ];
+                        
+                        // Try direct fetch with CORS first
+                        try {
+                            response = await fetch(originalSrc, { 
+                                mode: 'cors',
+                                credentials: 'omit'
+                            });
+                        } catch (e) {
+                            console.log('Direct CORS fetch failed, trying proxy...');
+                        }
+                        
+                        // If direct fetch failed, try proxies
+                        if (!response || !response.ok) {
+                            for (const proxyUrl of proxyUrls) {
+                                try {
+                                    console.log('Trying proxy:', proxyUrl.substring(0, 50) + '...');
+                                    response = await fetch(proxyUrl);
+                                    if (response.ok) {
+                                        console.log('✓ Proxy worked!');
+                                        break;
+                                    }
+                                } catch (e) {
+                                    console.log('Proxy failed:', e.message);
+                                    continue;
+                                }
+                            }
+                        }
+                        
+                        if (!response || !response.ok) {
+                            console.warn('✗ All fetch methods failed for:', img.src);
                             continue;
                         }
                         
@@ -859,8 +899,61 @@
                 return cached;
             }
 
-            const response = await fetch(url);
-            const blob = await response.blob();
+            let response;
+            let blob;
+            
+            // Use local proxy for RetroAchievements images
+            if (url.includes('retroachievements.org')) {
+                const proxyUrl = `/proxy/${encodeURIComponent(url)}`;
+                try {
+                    response = await fetch(proxyUrl);
+                    if (response.ok) {
+                        blob = await response.blob();
+                    }
+                } catch (e) {
+                    console.error('Proxy fetch failed:', e);
+                }
+            }
+            
+            // If proxy failed or not RetroAchievements, try direct (will fail due to CORS)
+            if (!blob) {
+                try {
+                    response = await fetch(url);
+                    if (response.ok) {
+                        blob = await response.blob();
+                    }
+                } catch (corsError) {
+                    console.log('Direct fetch blocked by CORS');
+                }
+            }
+            
+            // If still no blob, try external proxies as last resort
+            if (!blob) {
+                const proxyUrls = [
+                    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                    `https://corsproxy.io/?${encodeURIComponent(url)}`
+                ];
+                
+                for (const proxyUrl of proxyUrls) {
+                    try {
+                        console.log('Trying external proxy:', proxyUrl.substring(0, 50) + '...');
+                        response = await fetch(proxyUrl);
+                        if (response.ok) {
+                            blob = await response.blob();
+                            console.log('✓ External proxy worked!');
+                            break;
+                        }
+                    } catch (e) {
+                        console.log('External proxy failed:', e.message);
+                        continue;
+                    }
+                }
+            }
+            
+            if (!blob) {
+                throw new Error(`Failed to fetch image: ${url}`);
+            }
+            
             const base64 = await new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onloadend = () => resolve(reader.result);
